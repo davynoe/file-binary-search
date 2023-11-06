@@ -2,6 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+char* getNameFromLine(int line, FILE* file, int wordSize);
+int getNameLength(FILE* file);
+int getLineCount(FILE* file);
+int search(char* name, char* fileName);
+
+int main() {
+    char* fileName = "names.txt"; // change here
+    char* name = "Natal";         // change here
+
+    int result = search(name, fileName);
+    printf("'%s' found at line %d\n", name, result);
+    return 0;
+}
+
 char* getNameFromLine(int line, FILE* file, int wordSize) {
     char* name = (char*)malloc(wordSize * sizeof(char)); 
     int offset = (line-1) * wordSize; 
@@ -12,7 +26,7 @@ char* getNameFromLine(int line, FILE* file, int wordSize) {
     return name;
 }
 
-int getWordLength(FILE* file) {
+int getNameLength(FILE* file) {
     char word[100];
     if(fgets(word, sizeof(word), file) != NULL) {
         word[strcspn(word, "\n")] = '\0';
@@ -47,7 +61,7 @@ int search(char* name, char* fileName) {
         return 1;
     }
 
-    const int WORD_SIZE = getWordLength(file) + 1; // +1 for null terminator
+    const int WORD_SIZE = getNameLength(file) + 1; // +1 for null terminator
     const int LINE_COUNT = getLineCount(file);
 
     int low = 1;
@@ -83,10 +97,4 @@ int search(char* name, char* fileName) {
     free(highName);
     fclose(file);
     return -1; 
-}
-
-int main() {
-    int result = search("Henry", "names.txt");
-    printf("%d\n", result);
-    return 0;
 }
