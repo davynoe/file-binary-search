@@ -4,15 +4,14 @@
 
 #define WORD_SIZE 6 // word length + 1 for the null terminator
 
-void getNameFromLine(int line, FILE* file) {
+char* getNameFromLine(int line, FILE* file) {
     char *name = (char*)malloc(WORD_SIZE * sizeof(char)); 
     int offset = (line-1) * WORD_SIZE; 
 
     fseek(file, offset, SEEK_SET);
     fgets(name, WORD_SIZE, file);
 
-    puts(name);
-    free(name);
+    return name;
 }
 
 int main() {
@@ -23,7 +22,10 @@ int main() {
         return 1;
     }
 
-    getNameFromLine(1, file);
+    char* name = getNameFromLine(92, file);
+    puts(name);
+
+    free(name);
     fclose(file);
 
     return 0;
