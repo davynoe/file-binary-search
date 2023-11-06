@@ -2,17 +2,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define WORD_SIZE 6 // word length + 1 for the null terminator
-#define LINE_COUNT 70
-
-char* getNameFromLine(int line, FILE* file) {
-    char* name = (char*)malloc(WORD_SIZE * sizeof(char)); 
-    int offset = (line-1) * WORD_SIZE; 
+char* getNameFromLine(int line, FILE* file, int wordSize) {
+    char* name = (char*)malloc(wordSize * sizeof(char)); 
+    int offset = (line-1) * wordSize; 
 
     fseek(file, offset, SEEK_SET);
-    fgets(name, WORD_SIZE, file);
+    fgets(name, wordSize, file);
 
     return name;
+}
+
+int getWordLength(FILE* file) {
+    char word[100];
+    if(fgets(word, sizeof(word), file) != NULL) {
+        word[strcspn(word, "\n")] = '\0';
+        int result = strlen(word);
+        return result;
+    }
+    return -1;
+}
+
+int getLineCount(FILE* file) {
+    int lines=1;
+    int currentChar;
+
+    while((currentChar = fgetc(file)) != EOF) {
+        if(currentChar == '\n') {
+            lines++;
+        }
+    }
+
+    if(lines > 0 && currentChar != '\n') {
+        lines++;
+    }
+
+    return lines;
 }
 
 int search(char* name, char* fileName) {
@@ -23,14 +47,19 @@ int search(char* name, char* fileName) {
         return 1;
     }
 
+    const int WORD_SIZE = getWordLength(file) + 1; // +1 for null terminator
+    const int LINE_COUNT = getLineCount(file);
+
     int low = 1;
     int high = LINE_COUNT;
-    char* lowName = getNameFromLine(low, file);
-    char* highName = getNameFromLine(high, file);
+
+    char* lowName = getNameFromLine(low, file, WORD_SIZE);
+    char* highName = getNameFromLine(high, file, WORD_SIZE);
 
     while(strcmp(lowName, highName) <= 0) {
         int mid = low + (high-low)/2;
-        char* midName = getNameFromLine(mid, file);
+        char* midName = getNameFromLine(mid, file, WORD_SIZE);
+
         if(strcmp(name, midName) == 0) {
             free(midName);
             free(lowName);
@@ -38,12 +67,15 @@ int search(char* name, char* fileName) {
             fclose(file);
             return mid;
         }
+
         else if(strcmp(name, midName) < 0) {
             high = mid-1;
         }
+
         else {
             low = mid+1;
         }
+
         free(midName);
     }
 
@@ -54,7 +86,7 @@ int search(char* name, char* fileName) {
 }
 
 int main() {
-    int result = search("Zanee", "names.txt");
+    int result = search("Henry", "names.txt");
     printf("%d\n", result);
     return 0;
 }
