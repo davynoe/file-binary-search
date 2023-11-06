@@ -8,11 +8,10 @@ int getLineCount(FILE* file);
 int search(char* name, char* fileName);
 
 int main() {
-    char* fileName = "names.txt"; // change here
-    char* name = "Natal";         // change here
-
+    char* fileName = "names.txt";
+    char* name = "Henry";
     int result = search(name, fileName);
-    printf("'%s' found at line %d\n", name, result);
+    printf("Name '%s' found at line %d\n", name, result);
     return 0;
 }
 
