@@ -12,7 +12,6 @@ void fileToArray(char* fileName) {
         printf("%s", line);
         lineCount++;
     }
-    printf("%d\n", lineCount);
 }
 
 int main() {
