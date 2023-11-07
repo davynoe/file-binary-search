@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 // NOT: Bu kod ancak names.txt dosyasındaki tüm isimler aynı uzunluktayken çalışır.
 
 // fseek fonksiyonu ile dosyada doğru atlamaların sağlanması için
 // dosyanın içeriğinin tahmin edilebilir/sabit olması gerekir.
 
-char* getNameFromLine(int line, FILE* file, int wordSize);
+char* getNameFromLine(int line, FILE* file, int wordLength);
 int getNameLength(FILE* file);
 int getLineCount(FILE* file);
 int search(char* name, char* fileName);
