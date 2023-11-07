@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+// NOT: Bu kod ancak names.txt dosyasındaki tüm isimler aynı uzunluktayken çalışır.
+
+// fseek fonksiyonu ile dosyada doğru atlamaların sağlanması için
+// dosyanın içeriğinin tahmin edilebilir/sabit olması gerekir.
 
 char* getNameFromLine(int line, FILE* file, int wordSize);
 int getNameLength(FILE* file);
@@ -8,14 +13,25 @@ int getLineCount(FILE* file);
 int search(char* name, char* fileName);
 
 int main() {
-    char* fileName = "names.txt";
-    char* name = "Henry";
+    clock_t start, end;
+    double cpu_time_used;
+
+    start = clock();
+
+    char* fileName = "names.txt"; // değiştirilebilir
+    char* name = "Henry";         // değiştirilebilir
     int result = search(name, fileName);
     printf("Name '%s' found at line %d\n", name, result);
+
+    end = clock();
+    cpu_time_used = ((double) (end-start)) / CLOCKS_PER_SEC;
+    printf("Time taken: %f seconds\n", cpu_time_used);
     return 0;
 }
 
-char* getNameFromLine(int line, FILE* file, int wordSize) {
+char* getNameFromLine(int line, FILE* file, int wordLength) {
+    int wordSize = wordLength+1;
+
     char* name = (char*)malloc(wordSize * sizeof(char)); 
     int offset = (line-1) * wordSize; 
 
@@ -60,18 +76,18 @@ int search(char* name, char* fileName) {
         return 1;
     }
 
-    const int WORD_SIZE = getNameLength(file) + 1; // +1 for null terminator
+    const int WORD_LENGTH = getNameLength(file); 
     const int LINE_COUNT = getLineCount(file);
 
     int low = 1;
     int high = LINE_COUNT;
 
-    char* lowName = getNameFromLine(low, file, WORD_SIZE);
-    char* highName = getNameFromLine(high, file, WORD_SIZE);
+    char* lowName = getNameFromLine(low, file, WORD_LENGTH);
+    char* highName = getNameFromLine(high, file, WORD_LENGTH);
 
     while(strcmp(lowName, highName) <= 0) {
         int mid = low + (high-low)/2;
-        char* midName = getNameFromLine(mid, file, WORD_SIZE);
+        char* midName = getNameFromLine(mid, file, WORD_LENGTH);
 
         if(strcmp(name, midName) == 0) {
             free(midName);
