@@ -5,6 +5,28 @@
 
 #define MAX_LINE_LENGTH 100
 
+char** fileToArray(char* fileName, int* arrayLength);
+int search(char* fileName, char* key);
+
+int main() {
+    clock_t start, end;
+    double cpu_time_used;
+
+    start = clock();
+
+    char* name = "Vinni";
+    char* fileName = "names.txt";
+    int result = search(fileName, name);
+    printf("'%s' found at line %d\n", name, result);
+
+    end = clock();
+
+    cpu_time_used = ((double) (end-start)) / CLOCKS_PER_SEC;
+    printf("Execution time: %f seconds\n", cpu_time_used);
+
+    return 0;
+}
+
 char** fileToArray(char* fileName, int* arrayLength) {
     FILE* file = fopen(fileName, "r");
     char currentLine[MAX_LINE_LENGTH];
@@ -42,7 +64,7 @@ int search(char* fileName, char* key) {
     int low = 0;
     int high = arrayLength-1;
     int result;
-    while(low<high) {
+    while(low <= high) {
         int mid = low + (high-low)/2;
         char* midWord = array[mid];
 
@@ -64,22 +86,4 @@ int search(char* fileName, char* key) {
     free(array); // free array of pointers
 
     return result;
-}
-
-int main() {
-    clock_t start, end;
-    double cpu_time_used;
-
-    start = clock();
-
-    char* name = "Benja";
-    char* fileName = "names.txt";
-    int result = search(fileName, name);
-    printf("%d\n", result);
-
-    end = clock();
-
-    cpu_time_used = ((double) (end-start)) / CLOCKS_PER_SEC;
-    printf("Execution time: %f seconds\n", cpu_time_used);
-    return 0;
 }
