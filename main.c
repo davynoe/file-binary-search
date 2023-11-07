@@ -7,7 +7,7 @@
 
 char** fileToArray(char* fileName, int* arrayLength);
 int search(char* fileName, char* key);
-void test(char* fileName); // tests if every name in the file can be found
+void test(char* fileName); // tests if every word in the file can be found
 
 int main() {
     clock_t start, end;
@@ -15,8 +15,8 @@ int main() {
 
     start = clock();
 
-    char* word = "Zita";            // change this!
-    char* fileName = "names.txt";   // change this!
+    char* word = "Zita";            // changeable
+    char* fileName = "names.txt";   // changeable
     int result = search(fileName, word);
     if(result == -1) {
         printf("Unable to find %s in the file\n", word);
