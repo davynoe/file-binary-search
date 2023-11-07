@@ -30,7 +30,7 @@ int main() {
     printf("Execution time: %f seconds\n", cpu_time_used);
 
     // test("names.txt");
-    
+
     return 0;
 }
 
