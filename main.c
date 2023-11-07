@@ -15,14 +15,14 @@ int main() {
 
     start = clock();
 
-    char* name = "Zita";            // change this!
+    char* word = "Zita";            // change this!
     char* fileName = "names.txt";   // change this!
-    int result = search(fileName, name);
+    int result = search(fileName, word);
     if(result == -1) {
-        printf("Unable to find %s in the file\n", name);
+        printf("Unable to find %s in the file\n", word);
         return 0;
     }
-    printf("'%s' found at line %d\n", name, result);
+    printf("'%s' found at line %d\n", word, result);
     
     end = clock();
 
@@ -114,7 +114,7 @@ void test(char* fileName) {
     for(int i=0; i<arrayLength; i++) {
         int result = search(fileName, array[i]);
         if(result == -1 || result != i+1) {
-            printf("Cant find line %d\n", i+1);
+            printf("Cant find name at line %d\n", i+1);
             passed = 0;
         }
         free(array[i]);
