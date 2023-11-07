@@ -59,7 +59,7 @@ char** fileToArray(char* fileName, int* arrayLength) {
         }
 
         // allocate space same as the current line for the
-        // current array element, to store currentLine in the future
+        // current element in array, to store the current line in the future
         array[currentIndex] = malloc(strlen(currentLine)+1); // +1 for the '\0' element in the end
         if(array[currentIndex] == NULL) {
             perror("Memory allocation error");
@@ -98,7 +98,7 @@ int search(char* fileName, char* key) {
         }
     }
 
-    // free previously memory-allocated stuff
+    // free allocated stuff from fileToArray()
     for(int i=0; i<arrayLength; i++) {
         free(array[i]); // free each individual string
     }
