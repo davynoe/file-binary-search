@@ -7,6 +7,7 @@
 
 char** fileToArray(char* fileName, int* arrayLength);
 int search(char* fileName, char* key);
+void test(char* fileName); // tests if every name in the file can be found
 
 int main() {
     clock_t start, end;
@@ -14,42 +15,57 @@ int main() {
 
     start = clock();
 
-    char* name = "Vinni";
-    char* fileName = "names.txt";
+    char* name = "Zita";            // change this!
+    char* fileName = "names.txt";   // change this!
     int result = search(fileName, name);
+    if(result == -1) {
+        printf("Unable to find %s in the file\n", name);
+        return 0;
+    }
     printf("'%s' found at line %d\n", name, result);
-
+    
     end = clock();
 
     cpu_time_used = ((double) (end-start)) / CLOCKS_PER_SEC;
     printf("Execution time: %f seconds\n", cpu_time_used);
 
+    // test("names.txt");
     return 0;
 }
 
 char** fileToArray(char* fileName, int* arrayLength) {
     FILE* file = fopen(fileName, "r");
+    if(file == NULL) {
+        perror("Failed to open file");
+        exit(EXIT_FAILURE);
+    }
+
     char currentLine[MAX_LINE_LENGTH];
-    char** array = NULL; // dynamic array of strings
+    char** array = NULL; // future array of strings
 
     int lineCount = 0;
     while(fgets(currentLine, sizeof(currentLine), file) != NULL) {
         lineCount++;
+        int currentIndex = lineCount - 1;
+
         currentLine[strcspn(currentLine, "\n")] = '\0';
 
+        // extend array of strings by 1 element
         array = realloc(array, lineCount * sizeof(char*));
         if(array == NULL) {
             perror("Memory allocation error");
             exit(EXIT_FAILURE);
         }
 
-        array[lineCount-1] = malloc(strlen(currentLine)+1); 
-        if(array[lineCount - 1] == NULL) {
+        // allocate space same as the current line for the
+        // current array element, to store currentLine in the future
+        array[currentIndex] = malloc(strlen(currentLine)+1); // +1 for the '\0' element in the end
+        if(array[currentIndex] == NULL) {
             perror("Memory allocation error");
             exit(EXIT_FAILURE);
         }
 
-        strcpy(array[lineCount-1], currentLine);
+        strcpy(array[currentIndex], currentLine);
     }
 
     fclose(file);
@@ -59,11 +75,12 @@ char** fileToArray(char* fileName, int* arrayLength) {
 
 int search(char* fileName, char* key) {
     int arrayLength;
-    char** array = fileToArray("names.txt", &arrayLength);
+    char** array = fileToArray(fileName, &arrayLength);
 
     int low = 0;
     int high = arrayLength-1;
-    int result;
+    int result = -1;
+
     while(low <= high) {
         int mid = low + (high-low)/2;
         char* midWord = array[mid];
@@ -75,15 +92,35 @@ int search(char* fileName, char* key) {
             low = mid + 1;
         }
         else {
-            result = mid+1; // +1 to convert the index to a real line number
+            result = mid+1; // +1 to convert index to line number
             break;
         }
     }
 
+    // free previously memory-allocated stuff
     for(int i=0; i<arrayLength; i++) {
         free(array[i]); // free each individual string
     }
     free(array); // free array of pointers
 
     return result;
+}
+
+void test(char* fileName) {
+    int arrayLength;
+    char** array = fileToArray(fileName, &arrayLength);
+    int passed = 1;
+    for(int i=0; i<arrayLength; i++) {
+        int result = search(fileName, array[i]);
+        if(result == -1 || result != i+1) {
+            printf("Cant find line %d\n", i+1);
+            passed = 0;
+        }
+        free(array[i]);
+    }
+    free(array);
+
+    if(passed) {
+        printf("File '%s' passed all the tests!\n", fileName);
+    }
 }
